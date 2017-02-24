@@ -45,9 +45,6 @@ class Repository:
     def all(self):
         self._collection = requests.get(self.url).json()
 
-        # from repos_data import repos_data
-        # self._collection = repos_data
-
         return self
 
     def __str__(self):
@@ -61,12 +58,8 @@ class Repository:
         return result
 
 
-
 class Commit(Repository):
-
     def __init__(self, repository: str, username: str):
         Repository.__init__(self, username)
         self.repository = repository
         self.url = self._base_url + "repos/" + self.username + "/" + self.repository + "/commits"
-
-
