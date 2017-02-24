@@ -70,10 +70,3 @@ class Commit(Repository):
         self.url = self._base_url + "repos/" + self.username + "/" + self.repository + "/commits"
 
 
-
-    # def all(self):
-    #     from commits_data import commits_data
-    #     self._collection = commits_data
-    #
-    #     return self
-
