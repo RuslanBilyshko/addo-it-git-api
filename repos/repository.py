@@ -13,7 +13,7 @@ from repos.lang.trans import trans
     - Выборка полей:
         repo.all().select(['field1, ...'field_n']).get()
     - Загрузить информацию о конкретном репозитории:
-        repo.find('repos_name').get()
+        repo.find('repos_name').first()
 """
 
 
