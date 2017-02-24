@@ -1,11 +1,13 @@
 import requests
+from repos.lang.trans import trans
 
 
 class Repository:
-    __base_url = "https://api.github.com/"
+    _base_url = "https://api.github.com/"
 
     def __init__(self, username: str):
         self.username = username
+        self.url = self._base_url + "users/" + self.username + "/repos"
         self._collection = []
 
     def find(self, repository: str):
@@ -41,20 +43,20 @@ class Repository:
         return self._collection[0]
 
     def all(self):
-        # repo = self.__base_url + "users/" + self.username + "/repos"
-        # self._collection = requests.get(repo).json()
+        self._collection = requests.get(self.url).json()
 
-        from repos_data import repos_data
-        self._collection = repos_data
+        # from repos_data import repos_data
+        # self._collection = repos_data
+
         return self
 
     def __str__(self):
         result = ""
         for repos in self._collection:
             for key, value in repos.items():
-                result += "{}: {}\n".format(key, value)
+                result += "{}: {}\n".format(trans(key), value)
 
-            result += "------------------------\n"
+            result += "---------------------------------\n"
 
         return result
 
@@ -63,14 +65,15 @@ class Repository:
 class Commit(Repository):
 
     def __init__(self, repository: str, username: str):
-        self.repository = repository
         Repository.__init__(self, username)
+        self.repository = repository
+        self.url = self._base_url + "repos/" + self.username + "/" + self.repository + "/commits"
 
 
-    def all(self):
-        repo = self.__base_url + "users/" + self.username + "/repos"
-        self._collection = requests.get(repo).json()
 
-        # from repos_data import repos_data
-        # self._collection = repos_data
-        return self
+    # def all(self):
+    #     from commits_data import commits_data
+    #     self._collection = commits_data
+    #
+    #     return self
+
