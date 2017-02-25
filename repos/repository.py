@@ -112,6 +112,7 @@ class Repository:
             return 422
 
     def export(self, ext: str, path: str, file_name=None):
+        """Экспорт репозитория в файл"""
 
         if file_name is None:
             file_name = self.name
