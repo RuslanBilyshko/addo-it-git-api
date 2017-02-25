@@ -142,9 +142,9 @@ class Owner(Repository):
     def __init__(self, username):
         Repository.__init__(self, username)
 
-        from repos_data import repos_data
-        self._collection = [repos_data[0].get("owner")]
+        # from repos_data import repos_data
+        # self._collection = [repos_data[0].get("owner")]
 
-        # self._collection = [requests.get(self.url).json()[0].get("owner")]
+        self._collection = [requests.get(self.url).json()[0].get("owner")]
 
     def all(self): pass
