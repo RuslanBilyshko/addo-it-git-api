@@ -1,6 +1,10 @@
+import csv
+
 import requests
 from repos.lang.trans import trans
 import json
+import xlwt
+import os.path
 
 """
 Класс для работы с данными репозиториев пользователя
@@ -62,12 +66,12 @@ class Repository:
 
         return self._collection
 
-    def count(self):
+    def count(self) -> int:
         """Подсчитывает колличество элементов в коллекции"""
 
         return len(self._collection)
 
-    def first(self):
+    def first(self) -> dict:
         """Возвращает первый элемент коллекции"""
 
         return self._collection[0]
@@ -106,6 +110,48 @@ class Repository:
 
         if status == "422 Unprocessable Entity":
             return 422
+
+    def export(self, ext: str, path: str, file_name=None):
+
+        if file_name is None:
+            file_name = self.name
+
+        path_to_file = path + "/" + file_name + "." + ext
+
+        if ext == "csv":
+            self.__export_to_csv(path_to_file)
+        elif ext == "xls":
+            self.__export_to_exel(path_to_file)
+
+        if os.path.exists(path_to_file):
+            return True
+        else:
+            return False
+
+    def __export_to_exel(self, path: str):
+
+        wb = xlwt.Workbook()
+        ws = wb.add_sheet('Statistic of repo')
+
+        ws.write(0, 0, 'key')
+        ws.write(0, 1, 'value')
+
+        index = 1
+        for key, value in self._collection[0].items():
+            ws.write(index, 0, "{}".format(key))
+            ws.write(index, 1, "{}".format(value))
+            index += 1
+
+        wb.save(path)
+
+    def __export_to_csv(self, path: str):
+
+        toCSV = self._collection
+        keys = toCSV[0].keys()
+        with open(path, 'w') as output_file:
+            dict_writer = csv.DictWriter(output_file, keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(toCSV)
 
     def __str__(self):
         """Строковое представление репозиториев"""
