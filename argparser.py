@@ -3,10 +3,10 @@ import argparse
 class ArgParser(object):
 
     @staticmethod
-    def username(line: str) -> str:
+    def name(line: str) -> str:
         parser = argparse.ArgumentParser()
-        parser.add_argument('-u', '--username', required=True)
-        return parser.parse_args(line.split()).username
+        parser.add_argument('-n', '--name', required=True)
+        return parser.parse_args(line.split()).name
 
     @staticmethod
     def repos(line: str) -> dict:
