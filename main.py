@@ -1,7 +1,12 @@
 import cmd
+import csv
+from os import path
 from argparser import ArgParser
 from repos.repository import Repository, Commit, Owner
 from getpass import getpass
+import xlwt
+
+path_to_files = "resource/files/"
 
 
 class Cli(cmd.Cmd):
@@ -34,18 +39,6 @@ class Cli(cmd.Cmd):
     def do_stat(self, line):
         """Статиcтика репозитория Нужно будет указать Имя пользователя и Репозитория"""
 
-        # Вариант если бы параметры указывались при вызове команды
-        # а не запрашивались у пользователя
-
-        # """Статиcтика репозитория введите например: stat -u RuslanBilyshko -r add-it-task2.2"""
-
-        # stat -u RuslanBilyshko -r add-it-task2.2
-        # stat -u nesterenko-d -r rest-generator
-
-        # args = ArgParser.repos(line)
-        # rep = args["repos"]
-        # user = args["username"]
-
         user = input("Укажите имя пользователя: ")
         rep = input("Укажите имя репозитория: ")
 
@@ -76,9 +69,6 @@ class Cli(cmd.Cmd):
 
         name = ArgParser.name(line)
 
-        # name = "test3"
-        # user = 'RuslanBilyshko'
-
         user = input("Имя пользователя: ")
         secret = getpass("Пароль: ")
 
@@ -95,6 +85,31 @@ class Cli(cmd.Cmd):
 
         if status == 422:
             print("Репозиторий с таким названием уже существует.")
+
+    def do_export(self, line):
+
+        user = input("Имя пользователя: ")
+        repository = input("Название репозитория: ")
+        ext = input("Формат файла (csv / xls): ")
+
+        fields = [
+            "id",
+            "name",
+            "full_name",
+            "html_url",
+            "language",
+            "default_branch"
+        ]
+
+        repo = Repository(user).find(repository).select(fields)
+        path_to_file = path.abspath(path_to_files)
+        res = repo.export(ext, path_to_file)
+
+        if res:
+            print("Файл успешно создан")
+            print("Путь к файлу: {}/{}.{}".format(path_to_file, repo.name, ext))
+        else:
+            print("Ошибка экспорта. Повторите попытку")
 
     def default(self, line):
         print("Несуществующая команда")
