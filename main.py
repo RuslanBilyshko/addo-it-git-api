@@ -1,7 +1,7 @@
 import cmd
-
 from argparser import ArgParser
-from repos.repository import Repository, Commit
+from repos.repository import Repository, Commit, Owner
+from getpass import getpass
 
 
 class Cli(cmd.Cmd):
@@ -27,10 +27,15 @@ class Cli(cmd.Cmd):
         print("------------------------------------")
         print(repos)
 
-    def do_test(self, line): pass
+    def do_test(self, line):
+        owner = Owner('RuslanBilyshko')
+        print(owner.id)
 
     def do_stat(self, line):
         """Статиcтика репозитория Нужно будет указать Имя пользователя и Репозитория"""
+
+        # Вариант если бы параметры указывались при вызове команды
+        # а не запрашивались у пользователя
 
         # """Статиcтика репозитория введите например: stat -u RuslanBilyshko -r add-it-task2.2"""
 
@@ -43,7 +48,6 @@ class Cli(cmd.Cmd):
 
         user = input("Укажите имя пользователя: ")
         rep = input("Укажите имя репозитория: ")
-
 
         commits_count = Commit(rep, user).all().count()
 
@@ -66,6 +70,31 @@ class Cli(cmd.Cmd):
         # Но ничего не стоит воспользоваться repos.get()
         # И вывести сдесь все поля в нужном порядке
         print(repos)
+
+    def do_create(self, line):
+        """Создание репозитория"""
+
+        name = ArgParser.name(line)
+
+        # name = "test3"
+        # user = 'RuslanBilyshko'
+
+        user = input("Имя пользователя: ")
+        secret = getpass("Пароль: ")
+
+        repo = Repository(user)
+        status = repo.create(name=name, secret=secret)
+
+        if status == 201:
+            html_url = repo.find(name).html_url
+            print("Поздравляем. Репозиторий \"{}\" успешно создан".format(name))
+            print("Ссылка на репозиторий: {}".format(html_url))
+
+        if status == 401:
+            print("Ошибка авторизации")
+
+        if status == 422:
+            print("Репозиторий с таким названием уже существует.")
 
     def default(self, line):
         print("Несуществующая команда")
